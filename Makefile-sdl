@@ -1,0 +1,14 @@
+TARGET=app
+
+CFLAGS = -Wall -O2 -g -lefence -DPLATFORM_SDL -Iinclude
+
+SDL_CFLAGS = `sdl-config --cflags`
+SDL_LDFLAGS = `sdl-config --libs` -LSDL_gfx -lSDL_gfx -I/usr/local/include/SDL
+
+SRCS = common/app.c sdl/lcd.c sdl/clk.c sdl/stubs.c common/sprite.c common/map.c common/tiles.c sdl/cmdline.c common/coinmap.c common/splash.c 
+
+all:
+	gcc -o $(TARGET) $(CFLAGS) $(SDL_CFLAGS) $(SDL_LDFLAGS) $(SRCS)
+
+clean:
+	rm -rf $(TARGET) $(TARGET).dSYM

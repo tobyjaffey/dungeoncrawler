@@ -1,0 +1,28 @@
+TARGET=app
+
+LIBS = common/app.rel imme/wdt.rel imme/pio.rel imme/clk.rel imme/lcd.rel imme/spi.rel imme/key.rel common/sprite.rel common/map.rel common/tiles.rel common/coinmap.rel common/splash.rel
+
+CC = sdcc 
+CFLAGS = -Iinclude --no-pack-iram --stack-auto -DPLATFORM_IMME
+
+all: $(TARGET).hex
+
+%.rel : %.c
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+$(TARGET).hex: $(LIBS)
+	sdcc $(LFLAGS) $(LIBS)
+	packihx < common/$(TARGET).ihx > $(TARGET).hex
+
+install: $(TARGET).hex
+	goodfet.cc erase
+	goodfet.cc flash $(TARGET).hex
+	goodfet.cc info
+verify: $(TARGET).hex
+	goodfet.cc verify $(TARGET).hex
+
+clean:
+	rm -f imme/*.hex imme/*.ihx imme/*.rel imme/*.asm imme/*.lst imme/*.rst imme/*.sym imme/*.lnk imme/*.map imme/*.mem
+	rm -f common/*.hex common/*.ihx common/*.rel common/*.asm common/*.lst common/*.rst common/*.sym common/*.lnk common/*.map common/*.mem
+	rm -f *.hex *.ihx *.rel *.asm *.lst *.rst *.sym *.lnk *.map *.mem
+
